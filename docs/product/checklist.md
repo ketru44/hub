@@ -645,9 +645,23 @@ QA-CORE-001 상태 알려줘
 
 ## P2 품질 및 운영
 
+- [ ] `FE-ARCH-001` 책형 레시피 화면의 컴포넌트와 라우트 구조를 리팩터링한다.
+  - 목표: 여러 화면 책임이 결합된 `RecipeListPlaceholderPage`를 책형 Layout과 독립 route page로 분리하고, 기존 기능과 사용자 경험을 유지한다.
+  - 선행 티켓: `FE-AUTH-004`, `FE-RECIPE-005`, `FE-RECIPE-006`, `FE-RECIPE-008`, `FE-SHARE-003`, `FE-SHARE-004`
+  - 세부 작업:
+    - [ ] 보호된 책형 Layout과 중첩 라우트로 목록·추가·상세·전달 코드 화면을 분리한다.
+      - 완료 기준: `/recipes`, `/recipes/new`, `/recipes/:recipeId`, `/transfer-invitations`가 공통 책형 Layout 아래에서 기존과 동일하게 동작한다.
+    - [ ] 레이아웃·내비게이션·목록·route page의 상태와 렌더링 책임을 분리한다.
+      - 완료 기준: 목록 조회와 갱신은 Layout, 상세 조회·삭제·조리 모드는 상세 page, AI 구조화는 추가 page가 담당하며 pathname 기반 콘텐츠 분기를 제거한다.
+    - [ ] 반복되는 폼 액션에 제한된 공통 Button을 적용하고 테스트를 책임별로 재구성한다.
+      - 완료 기준: Primary·Secondary·Danger 액션만 재사용하고 링크·필터·메뉴·아이콘 버튼은 범용화하지 않으며 기존 반응형·Focus·오류·중복 요청 방지 동작을 유지한다.
+  - 검증:
+    - [ ] 목록·추가·상세·전달 코드의 성공·오류·빈 상태와 모바일 메뉴·Dialog Focus를 확인하고 프론트엔드 전체 test·lint·build를 통과한다.
+  - 후속: `FE-DESIGN-001`
+
 - [ ] `FE-DESIGN-001` 핵심 화면의 디자인 일관성을 감사한다.
   - 목표: 기능별 접근성을 다시 구현하지 않고 전체 화면의 디자인 규칙 편차를 정리한다.
-  - 선행 티켓: `FE-AUTH-004`, `FE-RECIPE-005`, `FE-RECIPE-006`, `FE-RECIPE-008`, `FE-SHARE-003`, `FE-SHARE-004`
+  - 선행 티켓: `FE-AUTH-004`, `FE-RECIPE-005`, `FE-RECIPE-006`, `FE-RECIPE-008`, `FE-SHARE-003`, `FE-SHARE-004`, `FE-ARCH-001`
   - 세부 작업:
     - [ ] 기존 디자인 토큰과 책형 패턴의 사용 편차를 수정한다.
       - 완료 기준: 색상·타이포·간격·Radius와 Primary Action이 디자인 문서를 따른다.
