@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from "react-router";
+import { Navigate, Outlet, useLocation } from "react-router";
 import { useAuth } from "../auth/authContext";
 
 function ProtectedRoute({ children }) {
@@ -19,7 +19,7 @@ function ProtectedRoute({ children }) {
     return <Navigate to="/" replace state={{ returnTo }} />
   }
 
-  return children;
+  return children ?? <Outlet />;
 }
 
 export default ProtectedRoute;

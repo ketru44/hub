@@ -36,7 +36,7 @@ function jsonResponse(body, status = 200) {
   });
 }
 
-function renderPage(initialPath) {
+function renderPage(initialPath, { onRecipeSaved } = {}) {
   const user = {
     getIdToken: vi.fn().mockResolvedValue("firebase-token"),
   };
@@ -47,11 +47,15 @@ function renderPage(initialPath) {
         <Routes>
           <Route
             path="/transfer-invitations"
-            element={<TransferInvitationPage />}
+            element={
+              <TransferInvitationPage onRecipeSaved={onRecipeSaved} />
+            }
           />
           <Route
             path="/transfer-invitations/:linkToken"
-            element={<TransferInvitationPage />}
+            element={
+              <TransferInvitationPage onRecipeSaved={onRecipeSaved} />
+            }
           />
           <Route path="/recipes" element={<div>레시피 목록</div>} />
           <Route
@@ -111,6 +115,7 @@ describe("TransferInvitationPage", () => {
   });
 
   it("미리보기에서 관계 정보를 검증하고 중복 없이 저장한 뒤 상세로 이동한다", async () => {
+    const onRecipeSaved = vi.fn();
     let resolveAcceptRequest;
     const fetchMock = vi
       .fn()
@@ -123,7 +128,7 @@ describe("TransferInvitationPage", () => {
       );
     vi.stubGlobal("fetch", fetchMock);
 
-    renderPage("/transfer-invitations/link-token");
+    renderPage("/transfer-invitations/link-token", { onRecipeSaved });
 
     fireEvent.click(
       await screen.findByRole("button", { name: "수락" }),
@@ -182,6 +187,7 @@ describe("TransferInvitationPage", () => {
     expect(
       await screen.findByText("전달받은 레시피 상세"),
     ).toBeInTheDocument();
+    expect(onRecipeSaved).toHaveBeenCalledTimes(1);
   });
 
   it("관계 입력을 취소하면 저장하지 않고 미리보기로 돌아간다", async () => {

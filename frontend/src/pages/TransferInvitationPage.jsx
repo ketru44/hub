@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useAuth } from "../auth/authContext";
+import FormActionButton from "../components/FormActionButton";
 import {
   acceptTransferInvitation,
   getTransferInvitationByCode,
@@ -275,21 +276,23 @@ function RelationshipForm({
       ) : null}
 
       <div className="mt-6 flex gap-3">
-        <button
+        <FormActionButton
           type="button"
           disabled={isSaving}
           onClick={onCancel}
-          className="min-h-12 flex-1 rounded-lg border border-[#8d806b] bg-[#f8f5eb] px-4 font-semibold text-[#34362f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b6e35] disabled:opacity-70"
+          variant="secondary"
+          className="min-h-12 flex-1 text-[#34362f] focus-visible:outline-[#8b6e35]"
         >
           취소
-        </button>
-        <button
+        </FormActionButton>
+        <FormActionButton
           type="submit"
           disabled={isSaving}
-          className="min-h-12 flex-1 rounded-lg border border-[#061c16] bg-[#15332a] px-4 font-semibold text-[#f3e1b4] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b6e35] disabled:cursor-wait disabled:opacity-70"
+          aria-busy={isSaving}
+          className="min-h-12 flex-1"
         >
           {isSaving ? "저장 중…" : "저장"}
-        </button>
+        </FormActionButton>
       </div>
     </form>
   );
@@ -558,13 +561,14 @@ function TransferInvitationPage({ isDialog = false, onRecipeSaved }) {
             {errorMessage}
           </p>
         ) : null}
-        <button
+        <FormActionButton
           type="submit"
           disabled={isSubmitting}
-          className="mt-5 min-h-12 w-full rounded-lg border border-[#061c16] bg-[#15332a] bg-[url(/design-assets/cookbook/leather-texture-tile.png)] bg-center bg-size-[220px] px-4 font-semibold text-[#f3e1b4] shadow-[0_5px_14px_rgb(38_32_22/18%)] hover:bg-[#102b23] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8b6e35] disabled:cursor-wait disabled:opacity-70"
+          aria-busy={isSubmitting}
+          className="mt-5 min-h-12 w-full bg-[url(/design-assets/cookbook/leather-texture-tile.png)] bg-center bg-size-[220px] shadow-[0_5px_14px_rgb(38_32_22/18%)] hover:bg-[#102b23]"
         >
           {isSubmitting ? "코드 확인 중…" : "코드 확인"}
-        </button>
+        </FormActionButton>
       </form>
     );
   }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import TransferInvitationShareSection from "./TransferInvitationShareSection";
+import FormActionButton from "./FormActionButton";
 
 const typeLabels = {
   OWNED: "직접 작성",
@@ -390,24 +391,26 @@ function RecipeDetailView({
               </p>
             ) : null}
             <div className="mt-6 flex justify-end gap-3">
-              <button
+              <FormActionButton
                 type="button"
                 ref={deleteCancelButtonRef}
-                className="min-h-11 rounded-lg border border-[#b8aa8f] px-4 text-sm font-semibold text-[#55544d] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15332a] disabled:cursor-wait disabled:opacity-70"
+                variant="secondary"
+                className="text-sm"
                 disabled={isDeleting}
                 onClick={handleCloseDeleteDialog}
               >
                 취소
-              </button>
-              <button
+              </FormActionButton>
+              <FormActionButton
                 type="button"
-                className="min-h-11 rounded-lg bg-[#7f3c29] px-4 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7f3c29] disabled:cursor-wait disabled:opacity-70"
+                variant="danger"
+                className="text-sm"
                 aria-busy={isDeleting}
                 disabled={isDeleting}
                 onClick={handleConfirmDelete}
               >
                 {isDeleting ? "처리 중" : deleteActionLabel}
-              </button>
+              </FormActionButton>
             </div>
           </section>
         </div>
