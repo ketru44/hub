@@ -8,9 +8,8 @@ import {
   updateRecipe,
 } from "./recipeUpdate.service.js";
 import { RecipeNotFoundError } from "./recipeDetail.service.js";
+import type { RecipeType } from "./recipeType.js";
 import { UrlContentError } from "./urlContent.service.js";
-
-type RecipeType = "OWNED" | "EXTERNAL" | "RECEIVED";
 
 type RecordedQuery = {
   sql: string;

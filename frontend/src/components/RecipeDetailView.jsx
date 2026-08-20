@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
+import { APP_ROUTES, getRecipeEditPath } from "../routePaths";
+import {
+  RECIPE_TYPE_LABELS,
+  RECIPE_TYPES,
+} from "../utils/recipeTypes";
 import TransferInvitationShareSection from "./TransferInvitationShareSection";
 import FormActionButton from "./FormActionButton";
-
-const typeLabels = {
-  OWNED: "직접 작성",
-  EXTERNAL: "외부 출처",
-  RECEIVED: "전달받음",
-};
 
 function RecipeDetailView({
   isReceivedRecipeSaved,
@@ -27,8 +26,9 @@ function RecipeDetailView({
   const deleteTriggerRef = useRef(null);
   const deleteCancelButtonRef = useRef(null);
   const canEditOriginal =
-    recipeDetail.type === "OWNED" || recipeDetail.type === "EXTERNAL";
-  const isReceived = recipeDetail.type === "RECEIVED";
+    recipeDetail.type === RECIPE_TYPES.OWNED ||
+    recipeDetail.type === RECIPE_TYPES.EXTERNAL;
+  const isReceived = recipeDetail.type === RECIPE_TYPES.RECEIVED;
   const deleteActionLabel = isReceived
     ? "내 레시피북에서 제거"
     : "레시피 삭제";
@@ -85,7 +85,7 @@ function RecipeDetailView({
       <section aria-label="레시피 상세">
         {!isCookingMode ? (
           <Link
-            to="/recipes"
+            to={APP_ROUTES.recipes}
             className="inline-flex min-h-11 items-center text-sm text-[#4f5b50] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15332a] min-[1101px]:hidden"
           >
             ← 목록
@@ -94,7 +94,7 @@ function RecipeDetailView({
 
         <header className="border-b border-[#c9bea7] pb-5 max-[700px]:pt-2">
           <p className="text-xs font-semibold tracking-[0.08em] text-[#8b6e35]">
-            {typeLabels[recipeDetail.type]}
+            {RECIPE_TYPE_LABELS[recipeDetail.type]}
           </p>
           <h2 className="mt-2 text-[30px] font-semibold tracking-[0.04em] max-[700px]:text-[25px]">
             {recipeDetail.title}
@@ -139,13 +139,13 @@ function RecipeDetailView({
                       <li>
                         <Link
                           className="flex min-h-11 items-center px-4 text-sm text-[#31523d] hover:bg-[#eee7d9] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-[#15332a]"
-                          to={`/recipes/${recipeId}/edit`}
+                          to={getRecipeEditPath(recipeId)}
                         >
                           원본 수정
                         </Link>
                       </li>
                     ) : null}
-                    {recipeDetail.type === "OWNED" ? (
+                    {recipeDetail.type === RECIPE_TYPES.OWNED ? (
                       <li>
                         <button
                           type="button"
@@ -239,7 +239,7 @@ function RecipeDetailView({
           </section>
         ) : null}
 
-        {recipeDetail.type === "OWNED" ? (
+        {recipeDetail.type === RECIPE_TYPES.OWNED ? (
           <div hidden={isCookingMode || !isTransferShareOpen}>
             <TransferInvitationShareSection
               recipeId={recipeId}

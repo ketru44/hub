@@ -4,8 +4,7 @@ import type { Pool, PoolClient, QueryResult } from "pg";
 
 import { deleteRecipe } from "./recipeDelete.service.js";
 import { RecipeNotFoundError } from "./recipeDetail.service.js";
-
-type RecipeType = "OWNED" | "EXTERNAL" | "RECEIVED";
+import type { RecipeType } from "./recipeType.js";
 
 type RecordedQuery = {
   sql: string;

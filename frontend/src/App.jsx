@@ -10,32 +10,33 @@ import RecipeBookIndexPage from "./pages/RecipeBookIndexPage";
 import RecipeDetailPage from "./pages/RecipeDetailPage";
 import RecipeNewPage from "./pages/RecipeNewPage";
 import TransferInvitationDialogPage from "./pages/TransferInvitationDialogPage";
+import { APP_ROUTES } from "./routePaths";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<LoginPage />} />
+      <Route path={APP_ROUTES.login} element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
         <Route element={<RecipeBookLayout />}>
-          <Route path="/recipes" element={<RecipeBookIndexPage />} />
-          <Route path="/recipes/new" element={<RecipeNewPage />} />
-          <Route path="/recipes/:recipeId" element={<RecipeDetailPage />} />
+          <Route path={APP_ROUTES.recipes} element={<RecipeBookIndexPage />} />
+          <Route path={APP_ROUTES.recipeNew} element={<RecipeNewPage />} />
+          <Route path={APP_ROUTES.recipeDetail} element={<RecipeDetailPage />} />
           <Route
-            path="/transfer-invitations"
+            path={APP_ROUTES.transferInvitations}
             element={<TransferInvitationDialogPage />}
           />
         </Route>
         <Route
-          path="/recipes/draft"
+          path={APP_ROUTES.recipeDraft}
           element={
             <RecipeDraftRoute>
               <RecipeDraftPage />
             </RecipeDraftRoute>
           }
         />
-        <Route path="/recipes/:recipeId/edit" element={<RecipeEditPage />} />
+        <Route path={APP_ROUTES.recipeEdit} element={<RecipeEditPage />} />
         <Route
-          path="/transfer-invitations/:linkToken"
+          path={APP_ROUTES.transferInvitation}
           element={<TransferInvitationPage />}
         />
       </Route>

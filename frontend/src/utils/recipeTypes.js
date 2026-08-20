@@ -1,0 +1,11 @@
+export const RECIPE_TYPES = {
+  OWNED: "OWNED",
+  EXTERNAL: "EXTERNAL",
+  RECEIVED: "RECEIVED",
+};
+
+export const RECIPE_TYPE_LABELS = {
+  [RECIPE_TYPES.OWNED]: "직접 작성",
+  [RECIPE_TYPES.EXTERNAL]: "외부 출처",
+  [RECIPE_TYPES.RECEIVED]: "전달받음",
+};

@@ -12,8 +12,7 @@ import {
   resolvePublicAddress,
   UrlContentError,
 } from "./urlContent.service.js";
-
-type RecipeType = "OWNED" | "EXTERNAL";
+import type { EditableRecipeType } from "./recipeType.js";
 
 type FirebaseRecipeUser = {
   uid: string;
@@ -35,7 +34,7 @@ type CreateRecipeRequest = {
 
 type CreateRecipeResult = {
   id: string;
-  type: RecipeType;
+  type: EditableRecipeType;
 };
 
 export class RecipeCreateValidationError extends Error {
@@ -269,7 +268,8 @@ export async function createRecipe(
   requestBody: unknown,
 ): Promise<CreateRecipeResult> {
   const request = await normalizeCreateRecipeRequest(requestBody);
-  const type: RecipeType = request.source === null ? "OWNED" : "EXTERNAL";
+  const type: EditableRecipeType =
+    request.source === null ? "OWNED" : "EXTERNAL";
   const recipeId = randomUUID();
   const client = await pool.connect();
 

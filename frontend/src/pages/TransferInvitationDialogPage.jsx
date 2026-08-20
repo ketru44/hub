@@ -1,5 +1,6 @@
 import { createPortal } from "react-dom";
 import { useNavigate, useOutletContext } from "react-router";
+import { APP_ROUTES } from "../routePaths";
 import TransferInvitationPage from "./TransferInvitationPage";
 
 function TransferInvitationDialogPage() {
@@ -7,7 +8,7 @@ function TransferInvitationDialogPage() {
   const { refreshRecipes } = useOutletContext();
 
   function handleClose() {
-    navigate("/recipes/new");
+    navigate(APP_ROUTES.recipeNew);
   }
 
   return createPortal(

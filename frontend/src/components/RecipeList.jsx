@@ -1,14 +1,10 @@
 import { Link } from "react-router";
+import { getRecipeDetailPath } from "../routePaths";
 import {
   matchesRecipeFilter,
   recipeFilters,
 } from "../utils/recipeListFilters";
-
-const typeLabels = {
-  OWNED: "직접 작성",
-  EXTERNAL: "외부 출처",
-  RECEIVED: "전달받음",
-};
+import { RECIPE_TYPE_LABELS } from "../utils/recipeTypes";
 
 function RecipeList({
   activeFilter,
@@ -98,7 +94,7 @@ function RecipeList({
             return (
               <Link
                 key={recipe.id}
-                to={`/recipes/${recipe.id}`}
+                to={getRecipeDetailPath(recipe.id)}
                 className="flex min-h-28 justify-between gap-4 border-b border-[#d8cfbd] pb-4 pl-2.5 pt-5.5 hover:bg-[#f1ece1] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15332a] max-[700px]:min-h-19 max-[700px]:gap-2.5 max-[700px]:px-0 max-[700px]:py-3 short-screen:min-h-23 short-screen:py-3.5"
               >
                 <div className="min-w-0">
@@ -111,7 +107,7 @@ function RecipeList({
                     </p>
                   ) : null}
                   <div className="flex gap-2.5 text-xs text-[#68675e]">
-                    <span>{typeLabels[recipe.type]}</span>
+                    <span>{RECIPE_TYPE_LABELS[recipe.type]}</span>
                     {sourceOrRelationship ? (
                       <span>{sourceOrRelationship}</span>
                     ) : null}

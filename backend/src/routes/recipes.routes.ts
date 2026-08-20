@@ -14,9 +14,8 @@ import {
   RecipeUpdateValidationError,
   updateRecipe,
 } from "../services/recipeUpdate.service.js";
+import type { RecipeType } from "../services/recipeType.js";
 import { UrlContentError } from "../services/urlContent.service.js";
-
-type RecipeType = "OWNED" | "EXTERNAL" | "RECEIVED";
 
 type RecipeSummaryRow = {
   id: string;

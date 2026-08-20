@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { structureRecipe } from "../api/recipeApi";
 import { useAuth } from "../auth/authContext";
 import RecipeInputForm from "../components/RecipeInputForm";
+import { APP_ROUTES } from "../routePaths";
 
 function RecipeNewPage() {
   const { user } = useAuth();
@@ -15,7 +16,7 @@ function RecipeNewPage() {
     const idToken = await user.getIdToken();
     const structuredRecipe = await structureRecipe(idToken, recipeInput);
 
-    navigate("/recipes/draft", { state: structuredRecipe });
+    navigate(APP_ROUTES.recipeDraft, { state: structuredRecipe });
   }
 
   return (
@@ -25,8 +26,8 @@ function RecipeNewPage() {
       className="h-full overflow-y-auto p-[50px_42px_38px] max-[1100px]:p-[38px_42px] max-[700px]:p-[25px_22px_24px] short-screen:p-[30px_34px_24px]"
     >
       <RecipeInputForm
-        onCancel={() => navigate("/recipes")}
-        onOpenTransferCode={() => navigate("/transfer-invitations")}
+        onCancel={() => navigate(APP_ROUTES.recipes)}
+        onOpenTransferCode={() => navigate(APP_ROUTES.transferInvitations)}
         onPrepare={handlePrepareRecipe}
       />
     </div>

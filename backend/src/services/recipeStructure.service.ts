@@ -6,6 +6,9 @@ import {
   type StructureRecipeResult,
 } from "./recipeStructureContract.js";
 
+const DEFAULT_OPENAI_MODEL = "gpt-5.6-luna";
+const OPENAI_REQUEST_TIMEOUT_MS = 15_000;
+
 export type RecipeStructureErrorCode =
   | "AI_REQUEST_FAILED"
   | "AI_RESPONSE_INVALID";
@@ -56,9 +59,12 @@ export async function structureRecipe(
     throw new RecipeStructureError("AI_REQUEST_FAILED");
   }
 
-  const model = process.env.OPENAI_MODEL || "gpt-5.6-luna";
+  const model = process.env.OPENAI_MODEL || DEFAULT_OPENAI_MODEL;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15_000);
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    OPENAI_REQUEST_TIMEOUT_MS,
+  );
 
   try {
     const response = await fetchImpl("https://api.openai.com/v1/responses", {

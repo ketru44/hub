@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useAuth } from "../auth/authContext";
 import FormActionButton from "../components/FormActionButton";
+import { APP_ROUTES, getRecipeDetailPath } from "../routePaths";
 import {
   acceptTransferInvitation,
   getTransferInvitationByCode,
@@ -438,7 +439,7 @@ function TransferInvitationPage({ isDialog = false, onRecipeSaved }) {
       );
 
       onRecipeSaved?.();
-      navigate(`/recipes/${result.recipeId}`, {
+      navigate(getRecipeDetailPath(result.recipeId), {
         replace: true,
         state: { receivedRecipeSaved: true },
       });
@@ -484,7 +485,7 @@ function TransferInvitationPage({ isDialog = false, onRecipeSaved }) {
       <RecipePreview
         preview={preview}
         onAccept={handleStartAccept}
-        onReject={() => navigate("/recipes")}
+        onReject={() => navigate(APP_ROUTES.recipes)}
       />
     );
   } else if (linkToken) {
@@ -499,7 +500,7 @@ function TransferInvitationPage({ isDialog = false, onRecipeSaved }) {
           </p>
           <button
             type="button"
-            onClick={() => navigate("/recipes")}
+            onClick={() => navigate(APP_ROUTES.recipes)}
             className="mt-6 min-h-11 rounded-lg border border-[#31523d] bg-[#15332a] px-5 font-semibold text-[#f3e1b4]"
           >
             레시피북으로 돌아가기

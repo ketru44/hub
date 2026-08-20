@@ -9,6 +9,7 @@ import {
 import { deleteRecipe, getRecipeDetail } from "../api/recipeApi";
 import { useAuth } from "../auth/authContext";
 import RecipeDetailView from "../components/RecipeDetailView";
+import { APP_ROUTES } from "../routePaths";
 
 function RecipeDetailPage() {
   const { user } = useAuth();
@@ -63,7 +64,7 @@ function RecipeDetailPage() {
     const idToken = await user.getIdToken();
     await deleteRecipe(idToken, recipeId);
     removeRecipe(recipeId);
-    navigate("/recipes", { replace: true });
+    navigate(APP_ROUTES.recipes, { replace: true });
   }
 
   function handleCookingModeChange(nextCookingMode) {
@@ -88,7 +89,7 @@ function RecipeDetailPage() {
           >
             <p className="text-sm text-[#7f3c29]">{error}</p>
             <Link
-              to="/recipes"
+              to={APP_ROUTES.recipes}
               className="mt-4 inline-flex min-h-11 items-center rounded-md bg-[#15332a] px-4 text-sm text-[#f3e1b4] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#15332a]"
             >
               목록으로 돌아가기

@@ -5,8 +5,7 @@ import type {
   RecipeSource,
   RecipeStep,
 } from "./recipeStructureContract.js";
-
-type RecipeType = "OWNED" | "EXTERNAL" | "RECEIVED";
+import type { RecipeType } from "./recipeType.js";
 
 type RecipeRow = {
   id: string;

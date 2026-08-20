@@ -4,7 +4,9 @@ import { Link, Outlet, useMatch, useNavigate } from "react-router";
 import { getRecipes } from "../api/recipeApi";
 import { useAuth } from "../auth/authContext";
 import RecipeList from "../components/RecipeList";
+import { APP_ROUTES } from "../routePaths";
 import {
+  DEFAULT_RECIPE_FILTER_ID,
   matchesRecipeFilter,
   recipeFilters,
 } from "../utils/recipeListFilters";
@@ -14,12 +16,12 @@ function RecipeBookLayout() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isTransferInvitationDialog = Boolean(
-    useMatch("/transfer-invitations"),
+    useMatch(APP_ROUTES.transferInvitations),
   );
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeFilter, setActiveFilter] = useState("all");
+  const [activeFilter, setActiveFilter] = useState(DEFAULT_RECIPE_FILTER_ID);
   const [loadVersion, setLoadVersion] = useState(0);
   const [isBookLocked, setIsBookLocked] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -82,12 +84,12 @@ function RecipeBookLayout() {
 
   function handleOpenTransferCode() {
     setIsMobileMenuOpen(false);
-    navigate("/transfer-invitations");
+    navigate(APP_ROUTES.transferInvitations);
   }
 
   function handleOpenRecipeInput() {
     setIsMobileMenuOpen(false);
-    navigate("/recipes/new");
+    navigate(APP_ROUTES.recipeNew);
   }
 
   async function handleLogout() {
@@ -101,7 +103,7 @@ function RecipeBookLayout() {
 
     try {
       await signOut(firebaseAuth);
-      navigate("/", { replace: true });
+      navigate(APP_ROUTES.login, { replace: true });
     } catch {
       setLogoutError("로그아웃에 실패했어요. 다시 시도해 주세요.");
     } finally {
@@ -321,21 +323,21 @@ function RecipeBookLayout() {
             </div>
             <nav className="mt-5 grid gap-2" aria-label="모바일 주 메뉴">
               <Link
-                to="/recipes"
+                to={APP_ROUTES.recipes}
                 className="flex min-h-12 items-center rounded-lg border border-[#aa8c4b] px-4 text-[#eed08b] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e3c580]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 레시피북
               </Link>
               <Link
-                to="/recipes/new"
+                to={APP_ROUTES.recipeNew}
                 className="flex min-h-12 items-center rounded-lg border border-transparent px-4 text-[#eed08b] hover:bg-[rgb(255_244_204/7%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e3c580]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 새 레시피 기록
               </Link>
               <Link
-                to="/transfer-invitations"
+                to={APP_ROUTES.transferInvitations}
                 className="flex min-h-12 items-center rounded-lg border border-transparent px-4 text-[#eed08b] hover:bg-[rgb(255_244_204/7%)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e3c580]"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
