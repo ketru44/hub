@@ -1,7 +1,9 @@
 import { apiRequest } from "./apiClient";
 
+const RECIPES_API_PATH = "/api/recipes";
+
 export function getRecipes(idToken) {
-  return apiRequest("/api/recipes", { idToken });
+  return apiRequest(RECIPES_API_PATH, { idToken });
 }
 
 export function structureRecipe(idToken, recipeInput) {
@@ -13,7 +15,7 @@ export function structureRecipe(idToken, recipeInput) {
 }
 
 export function createRecipe(idToken, recipeRequest) {
-  return apiRequest("/api/recipes", {
+  return apiRequest(RECIPES_API_PATH, {
     method: "POST",
     idToken,
     body: recipeRequest,
@@ -21,14 +23,14 @@ export function createRecipe(idToken, recipeRequest) {
 }
 
 export function getRecipeDetail(idToken, recipeId) {
-  return apiRequest(`/api/recipes/${recipeId}`, {
+  return apiRequest(`${RECIPES_API_PATH}/${recipeId}`, {
     method: "GET",
     idToken,
   });
 }
 
 export function updateRecipe(idToken, recipeId, recipeRequest) {
-  return apiRequest(`/api/recipes/${recipeId}`, {
+  return apiRequest(`${RECIPES_API_PATH}/${recipeId}`, {
     method: "PATCH",
     idToken,
     body: recipeRequest,
@@ -36,7 +38,7 @@ export function updateRecipe(idToken, recipeId, recipeRequest) {
 }
 
 export function deleteRecipe(idToken, recipeId) {
-  return apiRequest(`/api/recipes/${recipeId}`, {
+  return apiRequest(`${RECIPES_API_PATH}/${recipeId}`, {
     method: "DELETE",
     idToken,
   });

@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from "react-router";
 import { getRecipeDetail, updateRecipe } from "../api/recipeApi";
 import { useAuth } from "../auth/authContext";
 import RecipeDraftForm from "../components/RecipeDraftForm";
+import { getRecipeDetailPath } from "../routePaths";
+import { RECIPE_TYPES } from "../utils/recipeTypes";
 
 function toEditableDraft(recipeDetail) {
   return {
@@ -46,8 +48,8 @@ function RecipeEditPage() {
           return;
         }
 
-        if (recipeDetail.type === "RECEIVED") {
-          navigate(`/recipes/${recipeDetail.id}`, { replace: true });
+        if (recipeDetail.type === RECIPE_TYPES.RECEIVED) {
+          navigate(getRecipeDetailPath(recipeDetail.id), { replace: true });
           return;
         }
 
@@ -75,7 +77,7 @@ function RecipeEditPage() {
   }, [navigate, recipeId, user]);
 
   function handleCancel() {
-    navigate(`/recipes/${recipeId}`);
+    navigate(getRecipeDetailPath(recipeId));
   }
 
   async function handleSave(draft) {
@@ -95,7 +97,7 @@ function RecipeEditPage() {
       const idToken = await user.getIdToken();
       const updatedRecipe = await updateRecipe(idToken, recipeId, draft);
 
-      navigate(`/recipes/${updatedRecipe.id}`, { replace: true });
+      navigate(getRecipeDetailPath(updatedRecipe.id), { replace: true });
     } catch (error) {
       setSaveError(
         error instanceof Error
@@ -135,7 +137,7 @@ function RecipeEditPage() {
             <p className="text-sm text-[#8a3f2b]">{loadError}</p>
             <Link
               className="mt-4 inline-flex min-h-11 items-center rounded-lg border border-[#b8aa8f] px-4 text-sm font-semibold text-[#55544d]"
-              to={`/recipes/${recipeId}`}
+              to={getRecipeDetailPath(recipeId)}
             >
               상세로 돌아가기
             </Link>

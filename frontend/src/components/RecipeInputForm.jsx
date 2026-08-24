@@ -1,4 +1,5 @@
 import { useState } from "react";
+import FormActionButton from "./FormActionButton";
 
 function validateSourceUrl(sourceUrl) {
   if (!sourceUrl) {
@@ -202,20 +203,22 @@ function RecipeInputForm({
         ) : null}
 
         <div className="flex justify-end gap-2.5 max-[700px]:grid max-[700px]:grid-cols-[auto_1fr]">
-          <button
+          <FormActionButton
             type="button"
-            className="min-h-11 rounded-lg border border-[#b8aa8f] px-4 text-sm text-[#55544d]"
+            variant="secondary"
+            className="text-sm"
             onClick={onCancel}
           >
             취소
-          </button>
-          <button
+          </FormActionButton>
+          <FormActionButton
             type="submit"
             disabled={isSubmitting}
-            className="min-h-11 rounded-lg border border-[#061c16] bg-[#15332a] bg-[url(/design-assets/cookbook/leather-texture-tile.png)] bg-center bg-size-[220px] px-5 text-sm font-semibold text-[#f3e1b4]"
+            aria-busy={isSubmitting}
+            className="bg-[url(/design-assets/cookbook/leather-texture-tile.png)] bg-center bg-size-[220px] px-5 text-sm"
           >
             {isSubmitting ? "정리하는 중..." : "레시피 정리하기"}
-          </button>
+          </FormActionButton>
         </div>
       </div>
     </form>

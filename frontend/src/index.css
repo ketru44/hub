@@ -34,6 +34,27 @@ button:focus-visible {
   outline-offset: 4px;
 }
 
+@media (max-width: 1100px) {
+  .book-spread:not(:has([data-book-right-page])) .book-right-page {
+    display: none;
+  }
+
+  .book-spread:has([data-book-right-page]) .book-list-page {
+    display: none;
+  }
+
+  .book-spread:has([data-book-right-page]) .book-right-page {
+    display: block;
+    height: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .book-spread:has([data-book-right-page]) .book-right-page {
+    border-radius: 5px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -12,14 +12,13 @@ import {
   type RecipeSnapshot,
   type SharedRecipe,
 } from "./transferInvitation.shared.js";
+import type { RecipeType } from "./recipeType.js";
 
 export { acceptTransferInvitation } from "./transferInvitationAccept.service.js";
 export {
   TransferInvitationError,
   type TransferInvitationErrorCode,
 } from "./transferInvitation.shared.js";
-
-type RecipeType = "OWNED" | "EXTERNAL" | "RECEIVED";
 
 type RecipeRow = {
   id: string;

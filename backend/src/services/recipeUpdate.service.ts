@@ -8,9 +8,7 @@ import {
   RecipeNotFoundError,
 } from "./recipeDetail.service.js";
 import { isRecord } from "./recipeStructureContract.js";
-
-type RecipeType = "OWNED" | "EXTERNAL" | "RECEIVED";
-type EditableRecipeType = Exclude<RecipeType, "RECEIVED">;
+import type { EditableRecipeType, RecipeType } from "./recipeType.js";
 
 type RecipeTypeRow = {
   type: RecipeType;

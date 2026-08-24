@@ -13,7 +13,12 @@ export interface ParsedYoutubeUrl {
   videoId: string;
 }
 
+const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
 const YOUTUBE_VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]{11}$/;
+const YOUTUBE_METADATA_TIMEOUT_MS = 10_000;
+const YOUTUBE_TRANSCRIPT_TIMEOUT_MS = 10_000;
+const YOUTUBE_TRANSCRIPT_MAX_OUTPUT_LENGTH = 20_000;
+const GEMINI_YOUTUBE_TIMEOUT_MS = 30_000;
 
 export function parseYoutubeUrl(
   sourceUrl: string,
@@ -106,7 +111,7 @@ export async function fetchYoutubeMetadata(
   videoId: string,
   apiKey: string,
   fetchImpl: typeof fetch = fetch,
-  timeoutMs = 10_000,
+  timeoutMs = YOUTUBE_METADATA_TIMEOUT_MS,
 ): Promise<YoutubeMetadata> {
   if (
     !YOUTUBE_VIDEO_ID_PATTERN.test(videoId) ||
@@ -279,8 +284,8 @@ export async function collectYoutubeContentFromEnvironment(
         pythonExecutable:
           process.platform === "win32" ? "python" : "python3",
         scriptPath: YOUTUBE_TRANSCRIPT_SCRIPT_PATH,
-        timeoutMs: 10_000,
-        maxOutputLength: 20_000,
+        timeoutMs: YOUTUBE_TRANSCRIPT_TIMEOUT_MS,
+        maxOutputLength: YOUTUBE_TRANSCRIPT_MAX_OUTPUT_LENGTH,
       });
 
       console.info("YouTube content collected.", {
@@ -298,8 +303,8 @@ export async function collectYoutubeContentFromEnvironment(
 
       const analysis = await analyzeYoutubeWithGemini(input, {
         apiKey,
-        model: process.env.GEMINI_MODEL?.trim() || "gemini-3.6-flash",
-        timeoutMs: 30_000,
+        model: process.env.GEMINI_MODEL?.trim() || DEFAULT_GEMINI_MODEL,
+        timeoutMs: GEMINI_YOUTUBE_TIMEOUT_MS,
       });
 
       console.info("YouTube content collected.", {

@@ -17,6 +17,15 @@
 
 ## 이력
 
+## 2026-08-18 · FE-ARCH-001 · 완료
+
+- 결과: 보호된 공통 `RecipeBookLayout` 아래 `/recipes`, `/recipes/new`, `/recipes/:recipeId`, `/transfer-invitations`를 독립 route page로 분리하고 617줄 `RecipeListPlaceholderPage`를 제거했다. 목록 조회·필터·재시도·수락 후 갱신은 Layout에, AI 구조화는 추가 page에, 상세 조회·삭제·조리 중 보기는 상세 page에 두면서 기존 책형 반응형·모바일 메뉴·전달 코드 Dialog와 입력 유지·중복 요청 차단을 보존했다. Primary·Secondary·Danger 폼 액션에만 `FormActionButton`을 적용했다.
+- 결정: route content는 `Outlet`으로 조합하고 1100px 이하의 목록·오른쪽 단일 page 전환은 route page marker와 CSS `:has()`로 처리해 pathname 기반 콘텐츠 분기를 제거한다. 전달 코드 Dialog는 숨김 처리된 책 배경 밖의 `document.body` portal로 렌더해 Focus와 접근성 트리를 유지한다.
+- 시행착오: 최초 책임 분리 뒤 기존 단일 page 테스트가 descendant route harness와 충돌해, 대형 회귀 테스트를 Layout·route·상세 책임별 테스트로 재구성했다. 첫 전체 lint에서 컴포넌트 파일의 필터 helper export가 Fast Refresh 규칙을 위반해 일반 유틸 파일로 옮겼다. Dialog를 `aria-hidden` 책 본문 안에 렌더한 첫 시도는 접근성 트리에서 Dialog까지 숨겨 portal로 수정했다.
+- 검증: Red에서 신규 Button 모듈 부재와 독립 route page marker·Dialog 기대 실패를 확인했다. 집중 6개 파일 26개 테스트와 보강 3개 파일 19개 테스트를 통과했고, 최종 전체 `npm test` 13개 파일·77개 테스트, `npm run lint`, `npm run build`, `git diff --check`를 통과했다. 실제 Firebase·Express·PostgreSQL 연결과 390px·700px·1100px 실기기 브라우저 확인은 수행하지 않았다.
+- 후속: `FE-DESIGN-001`
+- 반복 패턴: 없음
+
 ## 2026-07-27 · FE-RECIPE-008 · 완료
 
 - 결과: `OWNED`·`EXTERNAL` 상세에는 레시피 삭제, `RECEIVED` 상세에는 내 레시피북에서 제거를 표시하고 유형별 확인 모달을 거쳐 인증된 soft delete를 실행한다. 전달받은 레시피는 원 작성자와 다른 사용자에게 영향이 없음을 안내하며, 취소 시 요청하지 않고 처리 중 중복 요청을 막고 성공 후 삭제한 카드를 현재 목록에서 제거해 목록으로 이동한다. 404·서버 오류는 상세·목록 상태와 모달을 유지한 채 안내하고 재시도할 수 있다. 모달은 취소 버튼으로 초점을 옮기고 Escape·backdrop 취소 뒤 삭제·제거 트리거로 돌려보내며 처리 중에는 닫히지 않는다.

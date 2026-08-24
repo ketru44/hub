@@ -1,5 +1,6 @@
-import { Navigate, useLocation } from "react-router";
+import { Navigate, Outlet, useLocation } from "react-router";
 import { useAuth } from "../auth/authContext";
+import { APP_ROUTES } from "../routePaths";
 
 function ProtectedRoute({ children }) {
   const { user, isLoading } = useAuth();
@@ -16,10 +17,10 @@ function ProtectedRoute({ children }) {
   if (!user) {
     const returnTo = `${location.pathname}${location.search}${location.hash}`;
 
-    return <Navigate to="/" replace state={{ returnTo }} />
+    return <Navigate to={APP_ROUTES.login} replace state={{ returnTo }} />
   }
 
-  return children;
+  return children ?? <Outlet />;
 }
 
 export default ProtectedRoute;

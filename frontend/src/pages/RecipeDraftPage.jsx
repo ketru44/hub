@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router";
 import { createRecipe } from "../api/recipeApi";
 import { useAuth } from "../auth/authContext";
 import RecipeDraftForm from "../components/RecipeDraftForm";
+import { APP_ROUTES, getRecipeDetailPath } from "../routePaths";
 
 function RecipeDraftPage() {
   const { user } = useAuth();
@@ -13,7 +14,7 @@ function RecipeDraftPage() {
   const isSavingRef = useRef(false);
 
   function handleCancel() {
-    navigate("/recipes/new");
+    navigate(APP_ROUTES.recipeNew);
   }
 
   async function handleSave(draft) {
@@ -36,7 +37,7 @@ function RecipeDraftPage() {
         memo: null,
       });
 
-      navigate(`/recipes/${createdRecipe.id}`, {
+      navigate(getRecipeDetailPath(createdRecipe.id), {
         replace: true,
       });
     } catch (error) {

@@ -2,8 +2,7 @@ import { randomUUID } from "node:crypto";
 import type { Pool } from "pg";
 
 import { RecipeNotFoundError } from "./recipeDetail.service.js";
-
-type RecipeType = "OWNED" | "EXTERNAL" | "RECEIVED";
+import type { RecipeType } from "./recipeType.js";
 
 type RecipeRow = {
   type: RecipeType;

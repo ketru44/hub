@@ -1,4 +1,5 @@
 import { Navigate, useLocation } from "react-router";
+import { APP_ROUTES } from "../routePaths";
 
 function RecipeDraftRoute({ children }) {
   const { state } = useLocation();
@@ -14,7 +15,7 @@ function RecipeDraftRoute({ children }) {
     Array.isArray(state?.warnings);
 
   if (!hasValidDraft) {
-    return <Navigate to="/recipes/new" replace />;
+    return <Navigate to={APP_ROUTES.recipeNew} replace />;
   }
 
   return children

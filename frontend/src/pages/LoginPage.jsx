@@ -3,6 +3,7 @@ import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { firebaseAuth } from "../firebase";
 import { getCurrentUser } from "../api/authApi";
 import { useNavigate, useLocation } from "react-router";
+import { APP_ROUTES } from "../routePaths";
 
 const desktopCover = "/design-assets/cookbook/web-login-surface.webp";
 const mobileCover = "/design-assets/cookbook/mobile-login-surface.webp";
@@ -32,7 +33,7 @@ const LoginPage = () => {
         returnTo.startsWith("/") &&
         !returnTo.startsWith("//");
 
-      navigate(canReturnTo ? returnTo : "/recipes", { replace: true });
+      navigate(canReturnTo ? returnTo : APP_ROUTES.recipes, { replace: true });
 
     } catch (loginErr) {
       setError("로그인에 실패했어요. 다시 시도해 주세요.");

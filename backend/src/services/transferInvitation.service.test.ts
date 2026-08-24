@@ -11,6 +11,7 @@ import {
   getTransferInvitationCodeSecret,
   TransferInvitationError,
 } from "./transferInvitation.service.js";
+import type { RecipeType } from "./recipeType.js";
 
 type RecordedQuery = {
   sql: string;
@@ -19,7 +20,7 @@ type RecordedQuery = {
 
 const CODE_SECRET = "a-secure-transfer-code-secret-32-bytes";
 
-function createCreationPool(recipeType: "OWNED" | "EXTERNAL" | "RECEIVED" | null) {
+function createCreationPool(recipeType: RecipeType | null) {
   const queries: RecordedQuery[] = [];
   let releaseCount = 0;
 
