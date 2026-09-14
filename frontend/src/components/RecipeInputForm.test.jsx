@@ -11,6 +11,29 @@ import RecipeInputForm from "./RecipeInputForm";
 describe("RecipeInputForm", () => {
   afterEach(cleanup);
 
+  it("실제 첫 입력에서만 현재 input type을 알린다", () => {
+    const onInputStarted = vi.fn();
+
+    render(
+      <RecipeInputForm
+        isPrepared={false}
+        onCancel={vi.fn()}
+        onPrepare={vi.fn()}
+        onInputStarted={onInputStarted}
+      />,
+    );
+
+    const rawTextInput = screen.getByLabelText(/직접 입력/);
+    fireEvent.change(rawTextInput, { target: { value: "김치" } });
+    fireEvent.change(rawTextInput, { target: { value: "김치찌개" } });
+    fireEvent.change(screen.getByLabelText(/레시피 URL/), {
+      target: { value: "https://example.com/recipe" },
+    });
+
+    expect(onInputStarted).toHaveBeenCalledOnce();
+    expect(onInputStarted).toHaveBeenCalledWith("manual");
+  });
+
   it("처리 중에는 중복 제출을 막고 정규화한 입력을 한 번만 전달한다", async () => {
     let resolveRequest;
     const onPrepare = vi.fn();

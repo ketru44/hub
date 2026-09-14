@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { getRecipeInputType } from "../api/analyticsApi";
 import FormActionButton from "./FormActionButton";
 
 function validateSourceUrl(sourceUrl) {
@@ -23,6 +24,7 @@ function RecipeInputForm({
   isPrepared,
   onCancel,
   onPrepare,
+  onInputStarted,
   onOpenTransferCode,
 }) {
   const [sourceUrl, setSourceUrl] = useState("");
@@ -31,16 +33,40 @@ function RecipeInputForm({
   const [inputError, setInputError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [requestError, setRequestError] = useState("");
+  const hasReportedInputStartedRef = useRef(false);
+
+  function reportInputStarted(nextSourceUrl, nextRawText) {
+    if (
+      hasReportedInputStartedRef.current ||
+      (!nextSourceUrl.trim() && !nextRawText.trim())
+    ) {
+      return;
+    }
+
+    hasReportedInputStartedRef.current = true;
+    onInputStarted?.(
+      getRecipeInputType({
+        sourceUrl: nextSourceUrl.trim() || null,
+        rawText: nextRawText.trim() || null,
+      }),
+    );
+  }
 
   function handleSourceUrlChange(event) {
-    setSourceUrl(event.target.value);
+    const nextSourceUrl = event.target.value;
+
+    setSourceUrl(nextSourceUrl);
+    reportInputStarted(nextSourceUrl, rawText);
     setSourceUrlError("");
     setInputError("");
     setRequestError("");
   }
 
   function handleRawTextChange(event) {
-    setRawText(event.target.value);
+    const nextRawText = event.target.value;
+
+    setRawText(nextRawText);
+    reportInputStarted(sourceUrl, nextRawText);
     setInputError("");
     setRequestError("");
   }

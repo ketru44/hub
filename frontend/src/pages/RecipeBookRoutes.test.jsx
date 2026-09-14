@@ -3,6 +3,7 @@ import {
   fireEvent,
   render,
   screen,
+  waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter } from "react-router";
@@ -12,6 +13,7 @@ import { AuthContext } from "../auth/authContext";
 
 afterEach(() => {
   cleanup();
+  sessionStorage.clear();
   vi.unstubAllGlobals();
 });
 
@@ -124,6 +126,77 @@ describe("RecipeBook routes", () => {
       "/api/ai/recipes/structure",
       expect.objectContaining({ method: "POST" }),
     );
+    await waitFor(() => {
+      const eventNames = fetchMock.mock.calls
+        .filter(([path]) => path === "/api/analytics/events")
+        .map(([, request]) => JSON.parse(request.body).eventName);
+
+      expect(eventNames).toHaveLength(3);
+      expect(eventNames).toEqual(expect.arrayContaining([
+        "recipe_input_started",
+        "recipe_structure_requested",
+        "recipe_structure_succeeded",
+      ]));
+    });
+  });
+
+  it("AI 구조화 실패를 범주화해 기록하고 입력과 오류를 유지한다", async () => {
+    const fetchMock = vi.fn((path) => {
+      if (path === "/api/ai/recipes/structure") {
+        return Promise.resolve(
+          new Response(
+            JSON.stringify({
+              error: {
+                code: "AI_RESPONSE_INVALID",
+                message: "AI 응답 형식이 올바르지 않습니다.",
+              },
+            }),
+            {
+              status: 502,
+              headers: { "Content-Type": "application/json" },
+            },
+          ),
+        );
+      }
+
+      return Promise.resolve(
+        new Response(
+          JSON.stringify({
+            data: path === "/api/analytics/events" ? { id: "event-id" } : [],
+          }),
+          {
+            status: path === "/api/analytics/events" ? 201 : 200,
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      );
+    });
+    renderRoute("/recipes/new", fetchMock);
+    const rawTextInput = screen.getByLabelText(/직접 입력/);
+
+    fireEvent.change(rawTextInput, {
+      target: { value: "김치를 볶고 물을 넣는다." },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "레시피 정리하기" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "AI 응답 형식이 올바르지 않습니다.",
+    );
+    expect(rawTextInput).toHaveValue("김치를 볶고 물을 넣는다.");
+    await waitFor(() => {
+      const failedEvent = fetchMock.mock.calls
+        .filter(([path]) => path === "/api/analytics/events")
+        .map(([, request]) => JSON.parse(request.body))
+        .find(({ eventName }) => eventName === "recipe_structure_failed");
+
+      expect(failedEvent).toMatchObject({
+        properties: {
+          inputType: "manual",
+          errorType: "schema_validation",
+        },
+      });
+      expect(failedEvent.properties.latencyMs).toBeGreaterThanOrEqual(0);
+    });
   });
 
   it("전달 코드 Dialog backdrop을 누르면 추가 page로 돌아간다", async () => {
