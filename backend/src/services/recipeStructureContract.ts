@@ -44,6 +44,40 @@ export type StructureRecipeValidationFailure =
   | "blank_value"
   | "schema_mismatch";
 
+const RECIPE_WARNING_FIELDS = [
+  "title",
+  "description",
+  "servings",
+  "cookingTimeMinutes",
+] as const;
+const INGREDIENT_WARNING_FIELDS = ["name", "amount", "unit"] as const;
+const STEP_WARNING_FIELDS = ["description"] as const;
+
+function createWarningSchema(fieldValues: readonly string[]) {
+  return {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+      field: {
+        type: "string",
+        enum: fieldValues,
+      },
+      message: {
+        type: "string",
+        minLength: 1,
+      },
+      suggestedValue: {
+        anyOf: [
+          { type: "string" },
+          { type: "number" },
+          { type: "null" },
+        ],
+      },
+    },
+    required: ["field", "message", "suggestedValue"],
+  } as const;
+}
+
 export const RECIPE_STRUCTURE_SCHEMA = {
   type: "object",
   additionalProperties: false,
@@ -92,8 +126,12 @@ export const RECIPE_STRUCTURE_SCHEMA = {
                 type: "integer",
                 minimum: 1,
               },
+              warnings: {
+                type: "array",
+                items: createWarningSchema(INGREDIENT_WARNING_FIELDS),
+              },
             },
-            required: ["name", "amount", "unit", "order"],
+            required: ["name", "amount", "unit", "order", "warnings"],
           },
         },
         steps: {
@@ -111,8 +149,12 @@ export const RECIPE_STRUCTURE_SCHEMA = {
                 type: "string",
                 minLength: 1,
               },
+              warnings: {
+                type: "array",
+                items: createWarningSchema(STEP_WARNING_FIELDS),
+              },
             },
-            required: ["order", "description"],
+            required: ["order", "description", "warnings"],
           },
         },
         source: {
@@ -131,28 +173,7 @@ export const RECIPE_STRUCTURE_SCHEMA = {
     },
     warnings: {
       type: "array",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          field: {
-            type: "string",
-            minLength: 1,
-          },
-          message: {
-            type: "string",
-            minLength: 1,
-          },
-          suggestedValue: {
-            anyOf: [
-              { type: "string" },
-              { type: "number" },
-              { type: "null" },
-            ],
-          },
-        },
-        required: ["field", "message", "suggestedValue"],
-      },
+      items: createWarningSchema(RECIPE_WARNING_FIELDS),
     },
   },
   required: ["draft", "warnings"],
@@ -187,9 +208,7 @@ function isEditableWarningField(
   ingredientCount: number,
   stepCount: number,
 ): boolean {
-  if (
-    ["title", "description", "servings", "cookingTimeMinutes"].includes(field)
-  ) {
+  if (RECIPE_WARNING_FIELDS.some((recipeField) => recipeField === field)) {
     return true;
   }
 
@@ -200,8 +219,7 @@ function isEditableWarningField(
     return Number(ingredientMatch[1]) < ingredientCount;
   }
 
-  const stepMatch =
-    /^steps\[(0|[1-9]\d*)\]\.description$/.exec(field);
+  const stepMatch = /^steps\[(0|[1-9]\d*)\]\.description$/.exec(field);
 
   if (stepMatch) {
     return Number(stepMatch[1]) < stepCount;
@@ -272,6 +290,128 @@ function isRecipeWarning(
     value.message.trim().length > 0 &&
     isValidSuggestedValue
   );
+}
+
+function isScopedWarning(
+  value: unknown,
+  allowedFields: readonly string[],
+): value is RecipeWarning {
+  if (
+    !isRecord(value) ||
+    !hasOnlyKeys(value, ["field", "message", "suggestedValue"])
+  ) {
+    return false;
+  }
+
+  return (
+    typeof value.field === "string" &&
+    allowedFields.includes(value.field) &&
+    typeof value.message === "string" &&
+    value.message.trim().length > 0 &&
+    (value.suggestedValue === null ||
+      typeof value.suggestedValue === "string" ||
+      (typeof value.suggestedValue === "number" &&
+        Number.isFinite(value.suggestedValue)))
+  );
+}
+
+function normalizeProviderResult(value: unknown): unknown | null {
+  if (
+    !isRecord(value) ||
+    !hasOnlyKeys(value, ["draft", "warnings"]) ||
+    !isRecord(value.draft) ||
+    !Array.isArray(value.warnings) ||
+    !value.warnings.every((warning) =>
+      isScopedWarning(warning, RECIPE_WARNING_FIELDS),
+    )
+  ) {
+    return null;
+  }
+
+  const draft = value.draft;
+
+  if (
+    !hasOnlyKeys(draft, [
+      "title",
+      "description",
+      "servings",
+      "cookingTimeMinutes",
+      "source",
+      "ingredients",
+      "steps",
+    ]) ||
+    !Array.isArray(draft.ingredients) ||
+    !Array.isArray(draft.steps)
+  ) {
+    return null;
+  }
+
+  const normalizedIngredients = [];
+  const normalizedSteps = [];
+  const warnings: RecipeWarning[] = [...value.warnings];
+
+  for (const [index, ingredient] of draft.ingredients.entries()) {
+    if (
+      !isRecord(ingredient) ||
+      !hasOnlyKeys(ingredient, ["name", "amount", "unit", "order", "warnings"]) ||
+      !Array.isArray(ingredient.warnings) ||
+      !ingredient.warnings.every((warning) =>
+        isScopedWarning(warning, INGREDIENT_WARNING_FIELDS),
+      )
+    ) {
+      return null;
+    }
+
+    normalizedIngredients.push({
+      name: ingredient.name,
+      amount: ingredient.amount,
+      unit: ingredient.unit,
+      order: ingredient.order,
+    });
+    warnings.push(
+      ...ingredient.warnings.map((warning) => ({
+        ...warning,
+        field: `ingredients[${index}].${warning.field}`,
+      })),
+    );
+  }
+
+  for (const [index, step] of draft.steps.entries()) {
+    if (
+      !isRecord(step) ||
+      !hasOnlyKeys(step, ["order", "description", "warnings"]) ||
+      !Array.isArray(step.warnings) ||
+      !step.warnings.every((warning) =>
+        isScopedWarning(warning, STEP_WARNING_FIELDS),
+      )
+    ) {
+      return null;
+    }
+
+    normalizedSteps.push({
+      order: step.order,
+      description: step.description,
+    });
+    warnings.push(
+      ...step.warnings.map((warning) => ({
+        ...warning,
+        field: `steps[${index}].${warning.field}`,
+      })),
+    );
+  }
+
+  return {
+    draft: {
+      title: draft.title,
+      description: draft.description,
+      servings: draft.servings,
+      cookingTimeMinutes: draft.cookingTimeMinutes,
+      source: draft.source,
+      ingredients: normalizedIngredients,
+      steps: normalizedSteps,
+    },
+    warnings,
+  };
 }
 
 function validateStructureRecipeResult(
@@ -402,4 +542,21 @@ export function isStructureRecipeResult(
   value: unknown,
 ): value is StructureRecipeResult {
   return validateStructureRecipeResult(value) === null;
+}
+
+export function parseProviderStructureRecipeResult(value: unknown): {
+  result: StructureRecipeResult | null;
+  failure: StructureRecipeValidationFailure | null;
+} {
+  const normalizedResult = normalizeProviderResult(value);
+
+  if (!normalizedResult) {
+    return { result: null, failure: "schema_mismatch" };
+  }
+
+  const failure = validateStructureRecipeResult(normalizedResult);
+
+  return failure
+    ? { result: null, failure }
+    : { result: normalizedResult as StructureRecipeResult, failure: null };
 }

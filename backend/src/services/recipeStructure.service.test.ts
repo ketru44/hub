@@ -40,12 +40,14 @@ test("OpenAI 구조화 결과에 검증된 YouTube 출처를 주입한다", asyn
                         amount: "200",
                         unit: "g",
                         order: 1,
+                        warnings: [],
                       },
                     ],
                     steps: [
                       {
                         order: 1,
                         description: "재료를 넣고 끓인다.",
+                        warnings: [],
                       },
                     ],
                   },
@@ -83,7 +85,9 @@ test("OpenAI 구조화 결과에 검증된 YouTube 출처를 주입한다", asyn
 
     const requestBody = JSON.parse(requestedBody) as {
       input: Array<{ role: string; content: string }>;
+      reasoning: { effort: string };
     };
+    assert.deepEqual(requestBody.reasoning, { effort: "none" });
     const systemPrompt = requestBody.input.find(
       ({ role }) => role === "system",
     )?.content;
@@ -98,11 +102,11 @@ test("OpenAI 구조화 결과에 검증된 YouTube 출처를 주입한다", asyn
     );
     assert.match(
       systemPrompt ?? "",
-      /실제 존재하는 ingredients\[n\].*steps\[n\]\.description/,
+      /재료와 조리 단계의 경고는 해당 ingredients 또는 steps 항목의 warnings/,
     );
     assert.match(
       systemPrompt ?? "",
-      /경고가 없으면 빈 배열로 반환한다/,
+      /경고가 없으면 각 warnings를 빈 배열로 반환한다/,
     );
   } finally {
     if (originalApiKey === undefined) {
@@ -144,12 +148,14 @@ test("검증 실패 시 AI 원문 없이 실패 이유만 로그에 남긴다", 
                         amount: "200",
                         unit: "g",
                         order: 2,
+                        warnings: [],
                       },
                     ],
                     steps: [
                       {
                         order: 1,
                         description: "재료를 넣고 끓인다.",
+                        warnings: [],
                       },
                     ],
                   },

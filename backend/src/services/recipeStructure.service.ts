@@ -1,7 +1,6 @@
 import {
-  getStructureRecipeValidationFailure,
   RECIPE_STRUCTURE_SCHEMA,
-  isStructureRecipeResult,
+  parseProviderStructureRecipeResult,
   type RecipeSource,
   type StructureRecipeResult,
 } from "./recipeStructureContract.js";
@@ -76,6 +75,7 @@ export async function structureRecipe(
       body: JSON.stringify({
         model,
         store: false,
+        reasoning: { effort: "none" },
         input: [
           {
             role: "system",
@@ -84,9 +84,9 @@ export async function structureRecipe(
               "source는 서버가 설정하므로 항상 null로 반환한다. " +
               "조리 팁과 서버 전용 필드는 추가하지 않는다. " +
               "ingredients와 steps의 각 order는 배열 순서와 일치하도록 1부터 중복과 누락 없이 연속으로 지정한다. " +
-              "title, ingredients의 name, steps의 description, warnings의 field와 message는 공백을 제거한 뒤에도 비어 있지 않아야 한다. " +
-              "warnings의 field는 title, description, servings, cookingTimeMinutes 또는 실제 존재하는 ingredients[n].name, ingredients[n].amount, ingredients[n].unit, steps[n].description 형식만 사용하고 draft. 접두사를 붙이지 않는다. " +
-              "모호한 값을 추정하면 해당 편집 필드 경로와 이유를 warnings에 포함하고, 경고가 없으면 빈 배열로 반환한다. " +
+              "title, ingredients의 name, steps의 description, 모든 warnings의 message는 공백을 제거한 뒤에도 비어 있지 않아야 한다. " +
+              "레시피 기본 필드의 경고는 최상위 warnings에 넣고, 재료와 조리 단계의 경고는 해당 ingredients 또는 steps 항목의 warnings에 넣는다. " +
+              "모호한 값을 추정하면 해당 필드와 이유를 warnings에 포함하고, 경고가 없으면 각 warnings를 빈 배열로 반환한다. " +
               "응답을 반환하기 전에 위 규칙과 JSON Schema를 모두 만족하는지 확인한다.",
           },
           {
@@ -136,18 +136,20 @@ export async function structureRecipe(
       throw new RecipeStructureError("AI_RESPONSE_INVALID");
     }
 
-    if (!isStructureRecipeResult(parsedResult)) {
+    const parsedProviderResult = parseProviderStructureRecipeResult(parsedResult);
+
+    if (!parsedProviderResult.result) {
       console.warn("OpenAI structured response failed validation.", {
-        reason: getStructureRecipeValidationFailure(parsedResult),
+        reason: parsedProviderResult.failure,
         requestId: response.headers.get("x-request-id"),
       });
       throw new RecipeStructureError("AI_RESPONSE_INVALID");
     }
 
     return {
-      ...parsedResult,
+      ...parsedProviderResult.result,
       draft: {
-        ...parsedResult.draft,
+        ...parsedProviderResult.result.draft,
         source: recipeSource,
       },
     };
