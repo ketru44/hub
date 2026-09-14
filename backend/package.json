@@ -10,7 +10,9 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "type-check": "tsc --noEmit",
-    "migrate": "tsx src/scripts/migrate.ts"
+    "migrate": "tsx src/scripts/migrate.ts",
+    "benchmark:recipe": "tsx src/scripts/benchmarkRecipeStructure.ts",
+    "analytics:summary": "tsx src/scripts/analyticsSummary.ts"
   },
   "keywords": [],
   "author": "",
