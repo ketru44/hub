@@ -1,0 +1,176 @@
+{
+  "generatedAt": "2026-09-14T08:18:51.290Z",
+  "summary": {
+    "totalCases": 20,
+    "successfulCases": 20,
+    "schemaValidCases": 20,
+    "schemaSuccessRate": 100,
+    "averageLatencyMs": 5895,
+    "p50LatencyMs": 5126,
+    "p95LatencyMs": 9508,
+    "totalWarnings": 30,
+    "failureReasons": {}
+  },
+  "results": [
+    {
+      "caseId": "structured-001",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 4086,
+      "warningCount": 0
+    },
+    {
+      "caseId": "structured-002",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 4532,
+      "warningCount": 0
+    },
+    {
+      "caseId": "structured-003",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 2473,
+      "warningCount": 0
+    },
+    {
+      "caseId": "structured-004",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 5126,
+      "warningCount": 1
+    },
+    {
+      "caseId": "structured-005",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 3279,
+      "warningCount": 0
+    },
+    {
+      "caseId": "structured-006",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 5037,
+      "warningCount": 1
+    },
+    {
+      "caseId": "natural-001",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 8872,
+      "warningCount": 3
+    },
+    {
+      "caseId": "natural-002",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 7178,
+      "warningCount": 0
+    },
+    {
+      "caseId": "natural-003",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 9508,
+      "warningCount": 7
+    },
+    {
+      "caseId": "natural-004",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 7543,
+      "warningCount": 1
+    },
+    {
+      "caseId": "ambiguous-001",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 4923,
+      "warningCount": 4
+    },
+    {
+      "caseId": "ambiguous-002",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 5150,
+      "warningCount": 1
+    },
+    {
+      "caseId": "ambiguous-003",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 6544,
+      "warningCount": 5
+    },
+    {
+      "caseId": "ambiguous-004",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 6021,
+      "warningCount": 4
+    },
+    {
+      "caseId": "long-001",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 11186,
+      "warningCount": 2
+    },
+    {
+      "caseId": "long-002",
+      "inputType": "manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 7940,
+      "warningCount": 0
+    },
+    {
+      "caseId": "url-001",
+      "inputType": "url",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 4657,
+      "warningCount": 0
+    },
+    {
+      "caseId": "url-002",
+      "inputType": "url",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 3964,
+      "warningCount": 0
+    },
+    {
+      "caseId": "mixed-001",
+      "inputType": "url_and_manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 4734,
+      "warningCount": 1
+    },
+    {
+      "caseId": "mixed-002",
+      "inputType": "url_and_manual",
+      "success": true,
+      "schemaValid": true,
+      "latencyMs": 5153,
+      "warningCount": 0
+    }
+  ]
+}
