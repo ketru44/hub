@@ -10,6 +10,7 @@
 | 레시피 | `recipes` | 사용자의 레시피 목록에 보이는 레시피 한 건이다. |
 | 레시피 구성 | `ingredients`, `recipe_steps`, `recipe_sources` | 재료와 조리 단계, 선택적 외부 출처를 저장한다. |
 | 기록 | `recipe_audit_events` | 레시피 삭제와 복원 행위를 기록한다. |
+| 분석 | `analytics_events` | 핵심 레시피 Funnel의 검증된 행동 Event를 저장한다. |
 | 열람 공유 | `recipe_view_shares` | 로그인 없이 열 수 있는 공유 링크의 활성 상태를 관리한다. |
 | 전달 공유 | `transfer_invitations`, `received_recipe_details` | 전달 초대의 스냅샷과 전달받은 레시피의 관계·기억을 보관한다. |
 
@@ -36,6 +37,10 @@ ERD의 선은 1:N 또는 1:0..1 관계를 나타낸다. 다대다 관계는 사�
 * `recipe_sources`: 외부 출처가 있는 레시피에만 붙는 선택적 정보다. `recipe_id`가 PK이므로 레시피마다 최대 한 건이며 URL, 제목과 작성자를 저장한다.
 * `recipe_audit_events`: 레시피 삭제와 복원 이벤트를 행위 사용자 및 발생 시각과 함께 남긴다.
 
+### Product Analytics
+
+* `analytics_events`: 인증된 내부 사용자, browser tab session UUID, 허용된 Event 이름, Event별 검증된 작은 JSONB property와 서버 수신 시각만 저장한다. 레시피 원문, 메모, 전체 URL, 토큰, 사용자 프로필과 AI 요청·응답 전문은 저장하지 않는다.
+
 ### 열람 공유
 
 * `recipe_view_shares`: `OWNED` 또는 `EXTERNAL` 레시피마다 최대 하나인 열람 링크다. 원문 토큰 대신 고유한 `token_hash`를 저장하고, `revoked_at`이 있으면 링크를 비활성으로 판단한다. 링크 열람은 로그인과 무관하므로 사용자를 직접 참조하지 않는다.
@@ -55,6 +60,7 @@ Google 로그인에 성공하면 프론트엔드는 Firebase ID 토큰을 보호
 
 ```text
 Firebase ID token uid ─── users.firebase_uid
+users 1 ─── N analytics_events
 ```
 
 ### 2. 레시피 저장
@@ -104,7 +110,7 @@ transfer_invitations 1 ─── 0..1 received_recipe_details ─── 1 recipe
 
 열람 링크 조회는 비로그인으로 가능하다. 반면 전달 링크 미리보기와 수락은 로그인한 사용자만 가능하며, 한 초대는 한 번만 수락된다.
 
-감사와 전달 공유 관계의 FK는 `ON DELETE RESTRICT`를 사용한다. 현재 MVP는 레시피를 soft delete하므로 관계 기록을 유지하고, 향후 영구 삭제가 필요하면 보존·정리 순서를 별도 정책과 트랜잭션으로 처리한다.
+감사, 전달 공유 관계와 Analytics 기록의 FK는 `ON DELETE RESTRICT`를 사용한다. 현재 MVP는 레시피를 soft delete하므로 관계 기록을 유지하고, 향후 영구 삭제나 사용자 삭제가 필요하면 보존·정리 순서를 별도 정책과 트랜잭션으로 처리한다.
 
 ## 아직 ERD에 넣지 않은 것
 

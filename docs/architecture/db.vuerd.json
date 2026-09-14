@@ -39,7 +39,8 @@
       "table_recipe_audit_events",
       "table_recipe_view_shares",
       "table_transfer_invitations",
-      "table_received_recipe_details"
+      "table_received_recipe_details",
+      "table_analytics_events"
     ],
     "relationshipIds": [
       "rel_users_recipes",
@@ -52,13 +53,16 @@
       "rel_recipes_transfer_invitations",
       "rel_recipes_received_details",
       "rel_invitations_received_details",
-      "rel_users_original_owner_details"
+      "rel_users_original_owner_details",
+      "rel_users_analytics"
     ],
     "indexIds": [
       "index_recipes_owner_list",
       "index_audits_recipe_time",
       "index_invitations_source",
-      "index_invitations_expires"
+      "index_invitations_expires",
+      "index_analytics_event_time",
+      "index_analytics_session_time"
     ],
     "memoIds": []
   },
@@ -363,6 +367,39 @@
         "meta": {
           "updateAt": 1783948461652,
           "createAt": 1783930000000
+        }
+      },
+      "table_analytics_events": {
+        "id": "table_analytics_events",
+        "name": "analytics_events",
+        "comment": "핵심 레시피 Funnel의 검증된 Product Analytics Event",
+        "columnIds": [
+          "analytics_id",
+          "analytics_user_id",
+          "analytics_session_id",
+          "analytics_event_name",
+          "analytics_properties",
+          "analytics_created_at"
+        ],
+        "seqColumnIds": [
+          "analytics_id",
+          "analytics_user_id",
+          "analytics_session_id",
+          "analytics_event_name",
+          "analytics_properties",
+          "analytics_created_at"
+        ],
+        "ui": {
+          "x": 2300,
+          "y": 500,
+          "zIndex": 11,
+          "widthName": 100,
+          "widthComment": 300,
+          "color": "#9E9E9E"
+        },
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
         }
       }
     },
@@ -1486,6 +1523,126 @@
           "updateAt": 1783930000000,
           "createAt": 1783930000000
         }
+      },
+      "analytics_id": {
+        "id": "analytics_id",
+        "tableId": "table_analytics_events",
+        "name": "id",
+        "comment": "애플리케이션 생성 UUID",
+        "dataType": "UUID",
+        "default": "",
+        "options": 10,
+        "ui": {
+          "keys": 1,
+          "widthName": 60,
+          "widthComment": 133,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
+      },
+      "analytics_user_id": {
+        "id": "analytics_user_id",
+        "tableId": "table_analytics_events",
+        "name": "user_id",
+        "comment": "인증된 내부 사용자",
+        "dataType": "UUID",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 120,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
+      },
+      "analytics_session_id": {
+        "id": "analytics_session_id",
+        "tableId": "table_analytics_events",
+        "name": "session_id",
+        "comment": "browser tab flow UUID",
+        "dataType": "UUID",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 130,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
+      },
+      "analytics_event_name": {
+        "id": "analytics_event_name",
+        "tableId": "table_analytics_events",
+        "name": "event_name",
+        "comment": "허용된 핵심 Funnel Event",
+        "dataType": "VARCHAR(64)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 160,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
+      },
+      "analytics_properties": {
+        "id": "analytics_properties",
+        "tableId": "table_analytics_events",
+        "name": "properties",
+        "comment": "Event별 검증된 작은 JSON object",
+        "dataType": "JSONB",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 65,
+          "widthComment": 180,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
+      },
+      "analytics_created_at": {
+        "id": "analytics_created_at",
+        "tableId": "table_analytics_events",
+        "name": "created_at",
+        "comment": "서버 수신 시각",
+        "dataType": "TIMESTAMPTZ",
+        "default": "CURRENT_TIMESTAMP",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 90,
+          "widthDataType": 79,
+          "widthDefault": 122
+        },
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
       }
     },
     "relationshipEntities": {
@@ -1796,6 +1953,34 @@
           "updateAt": 1783930000000,
           "createAt": 1783930000000
         }
+      },
+      "rel_users_analytics": {
+        "id": "rel_users_analytics",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 2,
+        "start": {
+          "tableId": "table_users",
+          "columnIds": [
+            "users_id"
+          ],
+          "x": 2216.1739,
+          "y": 945.1304,
+          "direction": 8
+        },
+        "end": {
+          "tableId": "table_analytics_events",
+          "columnIds": [
+            "analytics_user_id"
+          ],
+          "x": 2300,
+          "y": 588,
+          "direction": 1
+        },
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
       }
     },
     "indexEntities": {
@@ -1868,6 +2053,42 @@
           "updateAt": 1783930000000,
           "createAt": 1783930000000
         }
+      },
+      "index_analytics_event_time": {
+        "id": "index_analytics_event_time",
+        "name": "idx_analytics_events_event_time",
+        "tableId": "table_analytics_events",
+        "indexColumnIds": [
+          "index_col_analytics_event",
+          "index_col_analytics_event_time"
+        ],
+        "seqIndexColumnIds": [
+          "index_col_analytics_event",
+          "index_col_analytics_event_time"
+        ],
+        "unique": false,
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
+      },
+      "index_analytics_session_time": {
+        "id": "index_analytics_session_time",
+        "name": "idx_analytics_events_session_time",
+        "tableId": "table_analytics_events",
+        "indexColumnIds": [
+          "index_col_analytics_session",
+          "index_col_analytics_session_time"
+        ],
+        "seqIndexColumnIds": [
+          "index_col_analytics_session",
+          "index_col_analytics_session_time"
+        ],
+        "unique": false,
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
       }
     },
     "indexColumnEntities": {
@@ -1939,6 +2160,46 @@
         "meta": {
           "updateAt": 1783930000000,
           "createAt": 1783930000000
+        }
+      },
+      "index_col_analytics_event": {
+        "id": "index_col_analytics_event",
+        "indexId": "index_analytics_event_time",
+        "columnId": "analytics_event_name",
+        "orderType": 1,
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
+      },
+      "index_col_analytics_event_time": {
+        "id": "index_col_analytics_event_time",
+        "indexId": "index_analytics_event_time",
+        "columnId": "analytics_created_at",
+        "orderType": 2,
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
+      },
+      "index_col_analytics_session": {
+        "id": "index_col_analytics_session",
+        "indexId": "index_analytics_session_time",
+        "columnId": "analytics_session_id",
+        "orderType": 1,
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
+        }
+      },
+      "index_col_analytics_session_time": {
+        "id": "index_col_analytics_session_time",
+        "indexId": "index_analytics_session_time",
+        "columnId": "analytics_created_at",
+        "orderType": 1,
+        "meta": {
+          "updateAt": 1789354800000,
+          "createAt": 1789354800000
         }
       }
     },

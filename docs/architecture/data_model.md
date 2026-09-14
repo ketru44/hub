@@ -537,10 +537,38 @@ interface ApiError {
 
 ---
 
-## 14. 개념 관계
+## 14. Analytics Event
+
+```ts
+interface AnalyticsEvent {
+  id: string;
+  userId: string;
+  sessionId: string;
+  eventName:
+    | "recipe_input_started"
+    | "recipe_structure_requested"
+    | "recipe_structure_succeeded"
+    | "recipe_structure_failed"
+    | "recipe_result_edited"
+    | "recipe_saved";
+  properties: Record<string, string | number | boolean | null>;
+  createdAt: string;
+}
+```
+
+- `id`와 `sessionId`는 UUID다.
+- `userId`는 Firebase uid를 그대로 저장하지 않고 내부 `users.id`를 참조한다.
+- `properties`는 Event별 API 검증을 통과한 작은 JSON object만 저장한다.
+- 레시피 원문, 메모, 전체 URL, 토큰, 사용자 프로필, AI prompt와 response 전문은 저장하지 않는다.
+- Event는 Product Analytics 기록이므로 Recipe 삭제 여부와 독립적으로 보존한다.
+
+---
+
+## 15. 개념 관계
 
 ```text
 User 1 ─── N Recipe
+User 1 ─── N AnalyticsEvent
 Recipe 1 ─── N Ingredient
 Recipe 1 ─── N RecipeStep
 Recipe 1 ─── 0..1 RecipeSource
@@ -555,7 +583,7 @@ Recipe 1 ─── 0..1 ReceivedRecipeInfo
 
 ---
 
-## 15. PostgreSQL 물리 모델
+## 16. PostgreSQL 물리 모델
 
 전체 물리 모델은 `docs/architecture/db.vuerd.json`을 기준으로 한다. ERD의 읽는 법과 테이블별 설명은 [ERD 안내서](db_erd_guide.md)를 참고한다.
 
@@ -570,16 +598,17 @@ Recipe 1 ─── 0..1 ReceivedRecipeInfo
 | `recipe_view_shares` | `recipe_id` | Recipe 1:0..1, `token_hash` UNIQUE |
 | `transfer_invitations` | `id` | 원본 Recipe 참조, 링크·코드 해시 UNIQUE |
 | `received_recipe_details` | `recipe_id` | Recipe 1:0..1, `transfer_invitation_id` UNIQUE |
+| `analytics_events` | `id` | User 1:N, Event 이름 제한, `properties` JSONB object |
 
 - 서비스 UUID는 애플리케이션의 `crypto.randomUUID()`로 생성하며 auto increment를 사용하지 않는다.
 - `recipe_view_shares`의 계획 모델은 보존하지만 P3 열람 공유 재검토 전에는 활성 MVP 마이그레이션 선행 조건으로 사용하지 않는다.
-- 조회 인덱스는 사용자별 활성 레시피 목록, 레시피별 감사 기록, 원본별 전달 초대와 초대 만료 시각에 둔다.
+- 조회 인덱스는 사용자별 활성 레시피 목록, 레시피별 감사 기록, 원본별 전달 초대, 초대 만료 시각과 Analytics Event·Session 시간순 집계에 둔다.
 - `canReshare`와 초대 수락자는 별도 컬럼으로 저장하지 않는다. 전자는 `RECEIVED` 정책에서, 후자는 받은 레시피의 `owner_id`에서 결정한다.
-- 감사와 전달 공유 관계를 보존하기 위해 `recipe_audit_events`, `transfer_invitations`, `received_recipe_details`의 FK는 `ON DELETE RESTRICT`를 사용한다. MVP는 Recipe를 soft delete하며, 향후 영구 삭제가 필요하면 관계 데이터의 보존·정리 순서를 별도 정책과 트랜잭션으로 명시한다.
+- 감사, 전달 공유 관계와 Analytics 기록을 보존하기 위해 `recipe_audit_events`, `transfer_invitations`, `received_recipe_details`, `analytics_events`의 FK는 `ON DELETE RESTRICT`를 사용한다. MVP는 Recipe를 soft delete하며, 향후 영구 삭제가 필요하면 관계 데이터의 보존·정리 순서를 별도 정책과 트랜잭션으로 명시한다.
 
 ---
 
-## 16. 후속 범위
+## 17. 후속 범위
 
 ### 조리 팁
 
