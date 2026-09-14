@@ -1,0 +1,144 @@
+[
+  {
+    "id": "structured-001",
+    "category": "structured",
+    "inputType": "manual",
+    "rawText": "김치찌개 2인분. 재료: 김치 300g, 돼지고기 150g, 두부 100g, 물 500ml. 김치와 돼지고기를 5분 볶고 물을 넣어 20분 끓인 뒤 두부를 넣어 5분 더 끓인다."
+  },
+  {
+    "id": "structured-002",
+    "category": "structured",
+    "inputType": "manual",
+    "rawText": "계란말이 2인분, 15분. 계란 4개, 대파 10g, 소금 1g, 식용유 1큰술. 계란과 다진 대파, 소금을 섞는다. 팬에 기름을 두르고 계란물을 나누어 부으며 말아 익힌다."
+  },
+  {
+    "id": "structured-003",
+    "category": "structured",
+    "inputType": "manual",
+    "rawText": "된장국 3인분. 된장 2큰술, 애호박 100g, 양파 80g, 두부 150g, 물 700ml. 물에 된장을 풀어 끓이고 채소를 넣어 10분, 두부를 넣어 5분 끓인다."
+  },
+  {
+    "id": "structured-004",
+    "category": "structured",
+    "inputType": "manual",
+    "rawText": "오이무침 2인분. 오이 1개, 고춧가루 1큰술, 식초 1큰술, 설탕 1작은술, 소금 1/2작은술. 오이를 썰어 소금에 10분 절이고 물기를 뺀 다음 양념과 버무린다."
+  },
+  {
+    "id": "structured-005",
+    "category": "structured",
+    "inputType": "manual",
+    "rawText": "버섯볶음 2인분, 조리 12분. 새송이버섯 200g, 양파 1/2개, 간장 1큰술, 참기름 1작은술. 버섯과 양파를 썰어 센 불에 볶고 간장과 참기름으로 마무리한다."
+  },
+  {
+    "id": "structured-006",
+    "category": "structured",
+    "inputType": "manual",
+    "rawText": "닭가슴살 샐러드 1인분. 닭가슴살 120g, 양상추 80g, 방울토마토 5개, 올리브유 1큰술, 레몬즙 1큰술. 닭가슴살을 익혀 썰고 채소와 함께 담아 드레싱을 뿌린다."
+  },
+  {
+    "id": "natural-001",
+    "category": "natural_language",
+    "inputType": "manual",
+    "rawText": "엄마가 해주던 감자볶음은 감자 두 개를 가늘게 썰고 물에 한번 헹군 다음 양파랑 같이 볶았어. 소금으로 간하고 마지막에 깨를 뿌리면 돼."
+  },
+  {
+    "id": "natural-002",
+    "category": "natural_language",
+    "inputType": "manual",
+    "rawText": "식빵에 마요네즈를 얇게 바르고 슬라이스 치즈랑 햄을 올려. 팬을 약하게 달군 뒤 앞뒤로 노릇하게 구우면 아침 샌드위치 완성. 한 사람이 먹을 양이야."
+  },
+  {
+    "id": "natural-003",
+    "category": "natural_language",
+    "inputType": "manual",
+    "rawText": "콩나물 한 봉지를 씻어서 냄비에 넣고 물 조금이랑 소금을 넣어 뚜껑 덮고 익혀. 다 익으면 대파, 다진 마늘, 참기름을 넣고 무쳐 먹는다."
+  },
+  {
+    "id": "natural-004",
+    "category": "natural_language",
+    "inputType": "manual",
+    "rawText": "남은 밥 한 공기에 잘 익은 김치와 참치 반 캔을 넣고 볶다가 고추장 조금으로 간해. 그릇에 담고 반숙 계란을 하나 올려 먹어."
+  },
+  {
+    "id": "ambiguous-001",
+    "category": "ambiguous_units",
+    "inputType": "manual",
+    "rawText": "두부를 먹기 좋게 썰고 간장을 적당히, 고춧가루 조금, 다진 파를 넉넉히 넣은 양념장을 끼얹는다. 두부는 따뜻하게 데워도 된다."
+  },
+  {
+    "id": "ambiguous-002",
+    "category": "ambiguous_units",
+    "inputType": "manual",
+    "rawText": "소고기와 무를 비슷한 크기로 썰어 참기름에 충분히 볶는다. 물을 자작하게 붓고 국간장으로 간해서 무가 부드러워질 때까지 끓인다."
+  },
+  {
+    "id": "ambiguous-003",
+    "category": "ambiguous_units",
+    "inputType": "manual",
+    "rawText": "토마토 몇 개를 잘라 올리브유를 두르고 소금 한 꼬집과 후추를 뿌린다. 바질이 있으면 적당량 올려 바로 먹는다."
+  },
+  {
+    "id": "ambiguous-004",
+    "category": "ambiguous_units",
+    "inputType": "manual",
+    "rawText": "고구마를 충분히 익혀 으깬 뒤 우유를 원하는 농도가 될 만큼 넣는다. 꿀은 취향껏 섞고 견과류를 약간 올린다."
+  },
+  {
+    "id": "long-001",
+    "category": "long_recipe",
+    "inputType": "manual",
+    "rawText": "닭볶음탕 4인분을 만든다. 닭 1kg은 흐르는 물에 씻고 끓는 물에 2분 데친 뒤 건진다. 감자 3개는 큼직하게, 당근 1개와 양파 1개는 한입 크기로 썬다. 대파 1대와 청양고추 2개는 어슷하게 썬다. 고추장 3큰술, 고춧가루 2큰술, 간장 4큰술, 설탕 1큰술, 다진 마늘 1큰술을 섞어 양념을 만든다. 냄비에 닭과 물 700ml, 양념 절반을 넣고 센 불에서 끓인다. 끓기 시작하면 감자와 당근, 남은 양념을 넣고 중불에서 20분 끓인다. 양파를 넣어 10분 더 끓이고 국물이 너무 적으면 물을 조금 보충한다. 닭과 감자가 익으면 대파와 청양고추를 넣고 3분 끓인 뒤 불을 끈다."
+  },
+  {
+    "id": "long-002",
+    "category": "long_recipe",
+    "inputType": "manual",
+    "rawText": "채소 카레 4인분. 양파 2개는 얇게 썰고 감자 2개, 당근 1개, 애호박 1/2개는 2cm 크기로 썬다. 냄비에 식용유 2큰술을 두르고 양파를 중약불에서 12분 볶아 갈색을 낸다. 감자와 당근을 넣어 5분 볶고 물 800ml를 부어 끓인다. 끓으면 거품을 걷고 중불에서 15분 익힌다. 애호박을 넣고 5분 더 익힌 다음 불을 끈다. 카레 고형분 100g을 잘게 나누어 넣고 완전히 풀어 준다. 다시 약불에 올려 바닥이 눌어붙지 않도록 저으며 7분 끓인다. 너무 되직하면 물을 50ml씩 추가한다. 밥과 함께 담고 취향에 따라 후추를 뿌린다."
+  },
+  {
+    "id": "url-001",
+    "category": "url_collected",
+    "inputType": "url",
+    "collectedText": "제목: 애호박전. 재료는 애호박 1개, 달걀 2개, 밀가루 3큰술, 소금 1/2작은술, 식용유 2큰술이다. 애호박을 0.5cm 두께로 썰고 소금을 뿌린다. 밀가루와 달걀물을 차례로 묻혀 중불에서 앞뒤로 2분씩 굽는다.",
+    "source": {
+      "url": "https://example.com/recipes/zucchini-pancake",
+      "title": "애호박전 만들기",
+      "author": "테스트 키친"
+    }
+  },
+  {
+    "id": "url-002",
+    "category": "url_collected",
+    "inputType": "url",
+    "collectedText": "영상 제목: 10분 참치 덮밥. 1인분 기준 밥 1공기, 참치 1/2캔, 양파 1/4개, 간장 1큰술, 설탕 1작은술, 물 3큰술, 달걀 1개를 준비한다. 양파와 양념을 3분 끓이고 참치를 넣는다. 달걀을 풀어 부은 뒤 반숙이 되면 밥 위에 올린다.",
+    "source": {
+      "url": "https://www.youtube.com/watch?v=example001",
+      "title": "10분 참치 덮밥",
+      "author": "테스트 요리 채널"
+    }
+  },
+  {
+    "id": "mixed-001",
+    "category": "url_and_manual",
+    "inputType": "url_and_manual",
+    "collectedText": "토마토 파스타 2인분. 스파게티 180g, 토마토소스 300g, 마늘 3쪽, 올리브유 2큰술. 면을 삶고 마늘을 볶은 팬에 소스와 면을 넣어 섞는다.",
+    "rawText": "매운맛을 위해 페페론치노 2개를 마늘과 함께 볶고, 면 삶는 시간은 포장 표기보다 1분 짧게 해 주세요.",
+    "source": {
+      "url": "https://example.com/recipes/tomato-pasta",
+      "title": "기본 토마토 파스타",
+      "author": "테스트 키친"
+    }
+  },
+  {
+    "id": "mixed-002",
+    "category": "url_and_manual",
+    "inputType": "url_and_manual",
+    "collectedText": "바나나 팬케이크 2인분. 바나나 1개, 달걀 2개, 밀가루 80g, 우유 80ml를 섞어 반죽하고 약불에서 앞뒤로 굽는다.",
+    "rawText": "우유 대신 무가당 두유를 사용하고 설탕은 넣지 않습니다. 작은 크기로 6장을 만들고 싶어요.",
+    "source": {
+      "url": "https://example.com/recipes/banana-pancake",
+      "title": "바나나 팬케이크",
+      "author": "테스트 베이킹 노트"
+    }
+  }
+]
