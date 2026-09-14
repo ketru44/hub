@@ -47,7 +47,7 @@ function SavedRecipeResult() {
   return <p>저장됨: {recipeId}</p>;
 }
 
-function renderDraftPage() {
+function renderDraftPage(routeState = structuredRecipe) {
   const user = {
     getIdToken: vi.fn().mockResolvedValue("firebase-token"),
   };
@@ -58,7 +58,7 @@ function renderDraftPage() {
         initialEntries={[
           {
             pathname: "/recipes/draft",
-            state: structuredRecipe,
+            state: routeState,
           },
         ]}
       >
@@ -133,6 +133,57 @@ describe("RecipeDraftPage", () => {
     );
 
     expect(await screen.findByText("저장됨: recipe-id")).toBeInTheDocument();
+  });
+
+  it("초안 최초 수정과 저장 성공을 같은 flow 정보로 한 번씩 기록한다", async () => {
+    const fetchMock = vi.fn((path) =>
+      Promise.resolve(
+        new Response(
+          JSON.stringify({
+            data: path === "/api/recipes"
+              ? { id: "recipe-id", type: "OWNED" }
+              : { id: "event-id" },
+          }),
+          {
+            status: path === "/api/recipes" ? 201 : 200,
+            headers: { "Content-Type": "application/json" },
+          },
+        ),
+      ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    renderDraftPage({
+      ...structuredRecipe,
+      analytics: {
+        inputType: "manual",
+        sessionId: "7d00f8f0-8829-40ad-9725-88f463503bbb",
+      },
+    });
+
+    const titleInput = screen.getByLabelText("음식 이름");
+    fireEvent.change(titleInput, { target: { value: "수정한 김치찌개" } });
+    fireEvent.change(titleInput, { target: { value: "다시 수정한 김치찌개" } });
+    fireEvent.click(screen.getByRole("button", { name: "저장하기" }));
+
+    expect(await screen.findByText("저장됨: recipe-id")).toBeInTheDocument();
+    await waitFor(() => {
+      const analyticsRequests = fetchMock.mock.calls
+        .filter(([path]) => path === "/api/analytics/events")
+        .map(([, request]) => JSON.parse(request.body));
+
+      expect(analyticsRequests).toEqual([
+        {
+          eventName: "recipe_result_edited",
+          sessionId: "7d00f8f0-8829-40ad-9725-88f463503bbb",
+          properties: { inputType: "manual" },
+        },
+        {
+          eventName: "recipe_saved",
+          sessionId: "7d00f8f0-8829-40ad-9725-88f463503bbb",
+          properties: { inputType: "manual", wasEditedAfterAI: true },
+        },
+      ]);
+    });
   });
 
   it.each([

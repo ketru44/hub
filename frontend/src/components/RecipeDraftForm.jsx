@@ -11,6 +11,7 @@ function RecipeDraftForm({
   warnings,
   onSubmit,
   onCancel,
+  onFirstEdit,
   isSubmitting = false,
   submitError = "",
   isSourceEditable = false,
@@ -30,6 +31,16 @@ function RecipeDraftForm({
   const cookingTimeInputRef = useRef(null);
   const ingredientNameInputRefs = useRef([]);
   const stepInputRefs = useRef([]);
+  const hasReportedFirstEditRef = useRef(false);
+
+  function reportFirstEdit() {
+    if (hasReportedFirstEditRef.current) {
+      return;
+    }
+
+    hasReportedFirstEditRef.current = true;
+    onFirstEdit?.();
+  }
 
   function getWarning(field) {
     const warning = warnings.find((item) => item.field === field);
@@ -65,6 +76,7 @@ function RecipeDraftForm({
   function handleChange(event) {
     const { name, value } = event.target;
 
+    reportFirstEdit();
     setDraft((currentDraft) => ({
       ...currentDraft,
       [name]: value,
@@ -72,6 +84,7 @@ function RecipeDraftForm({
   }
 
   function handleIngredientChange(index, field, value) {
+    reportFirstEdit();
     setDraft((currentDraft) => ({
       ...currentDraft,
       ingredients: currentDraft.ingredients.map((ingredient, ingredientIndex) =>
@@ -83,6 +96,7 @@ function RecipeDraftForm({
   }
 
   function handleAddIngredient() {
+    reportFirstEdit();
     setDraft((currentDraft) => ({
       ...currentDraft,
       ingredients: [
@@ -98,6 +112,7 @@ function RecipeDraftForm({
   }
 
   function handleRemoveIngredient(index) {
+    reportFirstEdit();
     setDraft((currentDraft) => {
       if (currentDraft.ingredients.length === 1) {
         return currentDraft;
@@ -116,6 +131,7 @@ function RecipeDraftForm({
   }
 
   function handleMoveIngredient(index, offset) {
+    reportFirstEdit();
     setDraft((currentDraft) => {
       const targetIndex = index + offset;
 
@@ -144,6 +160,7 @@ function RecipeDraftForm({
   }
 
   function handleStepChange(index, value) {
+    reportFirstEdit();
     setDraft((currentDraft) => ({
       ...currentDraft,
       steps: currentDraft.steps.map((step, stepIndex) =>
@@ -155,6 +172,7 @@ function RecipeDraftForm({
   }
 
   function handleSourceChange(field, value) {
+    reportFirstEdit();
     setDraft((currentDraft) => ({
       ...currentDraft,
       source: {
@@ -168,6 +186,7 @@ function RecipeDraftForm({
   }
 
   function handleAddStep() {
+    reportFirstEdit();
     setDraft((currentDraft) => ({
       ...currentDraft,
       steps: [
@@ -181,6 +200,7 @@ function RecipeDraftForm({
   }
 
   function handleRemoveStep(index) {
+    reportFirstEdit();
     setDraft((currentDraft) => {
       if (currentDraft.steps.length === 1) {
         return currentDraft;
@@ -199,6 +219,7 @@ function RecipeDraftForm({
   }
 
   function handleMoveStep(index, offset) {
+    reportFirstEdit();
     setDraft((currentDraft) => {
       const targetIndex = index + offset;
 

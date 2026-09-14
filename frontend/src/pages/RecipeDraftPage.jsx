@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { createRecipe } from "../api/recipeApi";
+import { trackAnalyticsEvent } from "../api/analyticsApi";
 import { useAuth } from "../auth/authContext";
 import RecipeDraftForm from "../components/RecipeDraftForm";
 import { APP_ROUTES, getRecipeDetailPath } from "../routePaths";
@@ -12,9 +13,34 @@ function RecipeDraftPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const isSavingRef = useRef(false);
+  const wasEditedAfterAIRef = useRef(false);
+  const analytics = state.analytics;
 
   function handleCancel() {
     navigate(APP_ROUTES.recipeNew);
+  }
+
+  function handleFirstEdit() {
+    if (wasEditedAfterAIRef.current) {
+      return;
+    }
+
+    wasEditedAfterAIRef.current = true;
+
+    if (!user || !analytics) {
+      return;
+    }
+
+    void user.getIdToken()
+      .then((idToken) =>
+        trackAnalyticsEvent(
+          idToken,
+          "recipe_result_edited",
+          { inputType: analytics.inputType },
+          analytics.sessionId,
+        ),
+      )
+      .catch(() => undefined);
   }
 
   async function handleSave(draft) {
@@ -36,6 +62,18 @@ function RecipeDraftPage() {
         ...draft,
         memo: null,
       });
+
+      if (analytics) {
+        void trackAnalyticsEvent(
+          idToken,
+          "recipe_saved",
+          {
+            inputType: analytics.inputType,
+            wasEditedAfterAI: wasEditedAfterAIRef.current,
+          },
+          analytics.sessionId,
+        );
+      }
 
       navigate(getRecipeDetailPath(createdRecipe.id), {
         replace: true,
@@ -72,6 +110,7 @@ function RecipeDraftPage() {
           initialDraft={state.draft}
           warnings={state.warnings}
           onCancel={handleCancel}
+          onFirstEdit={handleFirstEdit}
           onSubmit={handleSave}
           isSubmitting={isSaving}
           submitError={saveError}
