@@ -278,6 +278,7 @@ Authorization: Bearer firebase-id-token
 #### AI 제공자와 요청 제한
 
 - OpenAI Responses API와 `gpt-5.6-luna`를 사용한다.
+- warning 참조 무결성 개선 후 benchmark guardrail을 통과한 `reasoning.effort: "none"`을 명시한다.
 - 비밀 키는 백엔드의 `OPENAI_API_KEY`, 모델은 `OPENAI_MODEL`로 설정한다.
 - YouTube 메타데이터용 `YOUTUBE_DATA_API_KEY`와 영상 분석용 `GEMINI_API_KEY`, `GEMINI_MODEL=gemini-3.6-flash`를 백엔드에서만 사용한다. Gemini는 자막 조회 실패 시에만 호출하며 최종 `RecipeDraft` 구조화와 검증은 계속 OpenAI가 담당한다.
 - OpenAI 요청은 15초, Gemini 영상 분석 요청은 30초 후 중단하며 자동으로 재시도하지 않는다.
@@ -287,7 +288,7 @@ Authorization: Bearer firebase-id-token
 
 #### AI 응답 검증
 
-- 제공자 요청에는 `RecipeDraft`와 `RecipeWarning`에 대응하는 엄격한 JSON Schema를 사용하고 스키마 밖 필드를 허용하지 않는다.
+- 제공자 요청에는 `RecipeDraft`와 `RecipeWarning`에 대응하는 엄격한 JSON Schema를 사용하고 스키마 밖 필드를 허용하지 않는다. 재료와 조리 단계 warning은 대상 배열 항목에 귀속해 받고 서버가 공개 응답의 편집 경로로 변환한다.
 - 서버는 구조화 출력도 신뢰하지 않고 JSON 파싱, 필수 필드와 타입, null 허용 범위, 배열 항목과 1부터 시작하는 중복 없는 `order`, 숫자 범위를 다시 검증한다.
 - `id`, `ownerId`, `type`, `memo`, `receivedInfo`, 날짜 필드는 AI 응답에 포함할 수 없다.
 - 직접 입력만 사용한 요청의 `source`는 `null`이어야 한다.
@@ -979,7 +980,55 @@ MVP에는 영구 삭제 API, 휴지통 비우기와 자동 purge 작업을 두�
 
 ---
 
-## 12. 주요 오류 코드
+## 12. Product Analytics Event 수집
+
+### `POST /api/analytics/events`
+
+인증된 사용자의 핵심 레시피 저장 Funnel Event를 저장한다. Event 정의와 trigger는 `docs/analytics/event-spec.md`를 따른다.
+
+#### 인증
+
+필요
+
+#### 요청
+
+```json
+{
+  "eventName": "recipe_saved",
+  "sessionId": "7d00f8f0-8829-40ad-9725-88f463503bbb",
+  "properties": {
+    "inputType": "manual",
+    "wasEditedAfterAI": true
+  }
+}
+```
+
+#### 처리 규칙
+
+- `recipe_input_started`, `recipe_structure_requested`, `recipe_structure_succeeded`, `recipe_structure_failed`, `recipe_result_edited`, `recipe_saved`만 허용한다.
+- Event별 정의된 property 이름과 타입만 허용하고 알 수 없는 필드는 거부한다.
+- `userId`와 저장 시각은 Firebase 인증 정보와 서버 시각으로 결정한다.
+- 원문, 메모, 전체 URL, 토큰, 사용자 프로필과 AI 요청·응답 전문은 받거나 저장하지 않는다.
+- Analytics 요청 실패는 원래의 AI 구조화, 레시피 저장 또는 화면 이동 결과를 바꾸지 않는다.
+
+#### 성공 응답
+
+```json
+{
+  "data": {
+    "id": "analytics-event-id"
+  }
+}
+```
+
+#### 오류
+
+- `UNAUTHORIZED`
+- `ANALYTICS_EVENT_INVALID`
+
+---
+
+## 13. 주요 오류 코드
 
 | 코드 | HTTP 상태 | 의미 |
 |---|---:|---|
@@ -995,6 +1044,7 @@ MVP에는 영구 삭제 API, 휴지통 비우기와 자동 purge 작업을 두�
 | `URL_FETCH_FAILED` | 422 | URL 내용 조회 실패 |
 | `AI_REQUEST_FAILED` | 502 | AI 제공자 요청 실패 |
 | `AI_RESPONSE_INVALID` | 502 | AI 응답 형식 또는 검증 오류 |
+| `ANALYTICS_EVENT_INVALID` | 400 | 허용하지 않은 Event 또는 property 형식 |
 | `RECIPE_NOT_EDITABLE` | 403 | 현재 레시피 유형은 원본을 수정할 수 없음 |
 | `RECIPE_RESTORE_EXPIRED` | 410 | 삭제 후 30일이 지나 복원할 수 없음 |
 | `RECIPE_NOT_SHAREABLE` | 403 | 레시피 유형 또는 소유권 정책상 공유할 수 없음 |
@@ -1008,7 +1058,7 @@ MVP에는 영구 삭제 API, 휴지통 비우기와 자동 purge 작업을 두�
 
 ---
 
-## 13. 현재 구현 범위
+## 14. 현재 구현 범위
 
 다음 API를 우선 구현한다.
 
@@ -1023,5 +1073,6 @@ MVP에는 영구 삭제 API, 휴지통 비우기와 자동 purge 작업을 두�
 9. `GET /api/transfer-invitations/by-link/:linkToken`
 10. `POST /api/transfer-invitations/by-code`
 11. `POST /api/transfer-invitations/:invitationId/accept`
+12. `POST /api/analytics/events`
 
 레시피 원본 수정, 삭제·복원과 개인 메모 API는 계약을 확정했지만 후속 구현 범위로 유지한다. 열람 공유 계약과 티켓도 유지하되 가치와 필요성을 다시 검토할 P3 연기 후보이며 활성 MVP·출시 선행 조건이 아니다. 조리 팁도 후속 범위다.
